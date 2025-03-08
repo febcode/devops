@@ -170,6 +170,80 @@ pipeline {
 
 ---
 
-### **🚀 Next Steps**
-- You can now use these variables in shell scripts, Kubernetes commands, or any CI/CD tasks.  
+If Jenkins is saying **"Could not find credentials entry with ID"**, the issue is likely due to one of the following:  
 
+---
+
+### **🔍 Possible Causes & Fixes**  
+
+### ✅ 1. Ensure the Credentials Exist in Jenkins  
+1. Go to **Jenkins Dashboard** → **Manage Jenkins** → **Manage Credentials**.  
+2. Look under the correct scope (Global, System, etc.).  
+3. Check if the credential ID exists.  
+4. If missing, **add the credentials manually**:  
+   - Click **Add Credentials**  
+   - Choose the correct **type** (Username/Password, SSH Key, Secret Text, etc.).  
+   - Set **ID** (must match the ID used in the pipeline).  
+   - Click **Save**.  
+
+---
+
+### ✅ 2. Verify You Are Using the Correct Credentials ID  
+- Ensure the **exact** credentials ID is used in the pipeline.  
+- Example of retrieving credentials in a Jenkinsfile:  
+  ```groovy
+  pipeline {
+    agent any
+    stages {
+        stage('Use Credentials') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'my-credential-id', 
+                                                 usernameVariable: 'USERNAME', 
+                                                 passwordVariable: 'PASSWORD')]) {
+                    sh 'echo "Username: $USERNAME"'
+                    sh 'echo "Password is hidden"'
+                }
+            }
+        }
+    }
+}
+
+  ```
+
+- To list available credentials, try running in a Jenkins **Groovy Script Console**:  
+  ```
+  println(jenkins.model.Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getCredentials().collect { it.id })
+  ```
+
+---
+
+### ✅ 3. Check Credential Scope  
+- If your credentials are **set to "System" scope**, they can **only** be used by Jenkins itself—not pipelines.  
+- Try setting them as **Global credentials** for pipeline access.  
+
+---
+
+### ✅ 4. If Running in a Folder, Ensure Folder Credentials Exist  
+- If your job is inside a **Jenkins folder**, credentials must be added to the **folder’s credentials store**, not global credentials.  
+
+🔹 **Go to Folder → Credentials → Add Credential**  
+
+---
+
+### ✅ 5. Restart Jenkins to Apply Changes  
+If you **recently added credentials**, try restarting Jenkins:  
+```sh
+sudo systemctl restart jenkins
+```
+Or reload the configuration:  
+- **Manage Jenkins** → **Reload Configuration from Disk**  
+
+---
+
+### **🚀 Next Steps**
+- Check **Manage Credentials** → **Correct Scope**.  
+- Verify **Credentials ID** in the pipeline.  
+- Try **adding credentials in the correct Jenkins folder** if applicable.  
+- If still failing, check **Jenkins logs (`/var/log/jenkins/jenkins.log`)**.  
+
+Let me know if you need further debugging! 😊
