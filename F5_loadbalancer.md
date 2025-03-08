@@ -64,3 +64,39 @@ The syntax **`VSName: ${VSName}`** suggests that **`VSName`** is a variable that
 1. **Check Where the JSON Is Used** → Jenkins, Helm, Terraform, Load Balancer?
 2. **Look for a Values File** → Is `VSName` defined in `values.yaml`, `.env`, or another config file?
 3. **Test by Printing the Value** → Run `echo ${VSName}` to see if it's getting replaced.
+
+When naming a **Virtual Server (VS) in F5 Load Balancer**, consider a structured and meaningful format based on the **application, environment, region, and purpose**. Here are some naming suggestions:
+
+### **1️⃣ General Naming Convention**
+```
+<app-name>-<env>-<region>-vs
+```
+or
+```
+vs-<app-name>-<env>-<region>
+```
+
+### **2️⃣ Suggested Names**
+| Application | Environment | Region | Suggested VS Name |
+|-------------|------------|--------|-------------------|
+| Payment Service | Dev | US-East | `payment-dev-useast-vs` |
+| API Gateway | Staging | Europe | `apigw-staging-eu-vs` |
+| E-commerce App | Production | India | `ecom-prod-india-vs` |
+| Internal Tool | QA | Singapore | `internaltool-qa-sg-vs` |
+| Banking App | Prod | Switzerland | `banking-prod-ch-vs` |
+| Machine Learning API | UAT | UK | `mlapi-uat-uk-vs` |
+
+### **3️⃣ Alternative Formats**
+- **Based on Application Role:**  
+  - `vs-appname-web-prod`
+  - `vs-appname-api-uat`
+  - `vs-appname-db-dev`
+  
+- **Including Port Number:**  
+  - `vs-payment-443-prod`
+  - `vs-apigateway-80-dev`
+  
+- **For Multi-Region Deployments:**  
+  - `vs-appname-useast`
+  - `vs-appname-euwest`
+  
