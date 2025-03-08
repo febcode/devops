@@ -121,5 +121,55 @@ It looks like you're encountering a **"missing required parameter: ParameterDefi
 ---
 
 ### **🔹 Next Steps**
-- **Check your Jenkins pipeline, OpenShift template, Helm values, or Tekton pipeline for missing parameters.**  
+- **Check your Jenkins pipeline, OpenShift template, Helm values, or Tekton pipeline for missing parameters.**
+
+In **Jenkins Declarative Pipeline**, you can set parameters as environment variables (`env`) inside the pipeline so they can be used easily across stages.  
+
+---
+
+### **✅ Corrected Jenkinsfile with Parameters as Environment Variables**
+```groovy
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'ENV', choices: ['dev', 'qa', 'prod'], description: 'Select environment')
+        choice(name: 'BUILD_TYPE', choices: ['Full', 'Incremental'], description: 'Type of build')
+        choice(name: 'DEPLOY_REGION', choices: ['US-East', 'EU-West', 'AP-South'], description: 'Deployment region')
+    }
+    environment {
+        SELECTED_ENV = "${params.ENV}"
+        BUILD_TYPE = "${params.BUILD_TYPE}"
+        DEPLOY_REGION = "${params.DEPLOY_REGION}"
+    }
+    stages {
+        stage('Test') {
+            steps {
+                script {
+                    echo "Selected Environment: ${env.SELECTED_ENV}"
+                    echo "Build Type: ${env.BUILD_TYPE}"
+                    echo "Deployment Region: ${env.DEPLOY_REGION}"
+                }
+            }
+        }
+    }
+}
+```
+
+---
+
+### **📌 Key Fixes**
+1. **Used `environment {}` block**  
+   - Converts parameters into **Jenkins environment variables**.  
+   - Can be accessed in any stage using `env.VARIABLE_NAME`.  
+
+2. **`${params.ENV}` → `${env.SELECTED_ENV}`**  
+   - This ensures the parameter value is available throughout the pipeline.  
+
+3. **`echo` statements**  
+   - Demonstrates how to access these environment variables.  
+
+---
+
+### **🚀 Next Steps**
+- You can now use these variables in shell scripts, Kubernetes commands, or any CI/CD tasks.  
 
